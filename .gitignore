@@ -1,0 +1,23 @@
+# Node
+node_modules/
+dist/
+.env
+npm-debug.log
+yarn-error.log
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# React Native / mobile
+android/
+ios/
+*.keystore
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
