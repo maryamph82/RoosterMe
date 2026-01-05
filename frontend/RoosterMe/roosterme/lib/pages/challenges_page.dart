@@ -1,10 +1,16 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../services/alarm_notification_service.dart';
 
 class ChallengesPage extends StatefulWidget {
   final Map<String, dynamic> userData;
+  final int alarmId;
 
-  const ChallengesPage(this.userData, {super.key});
+  const ChallengesPage({
+    super.key,
+    required this.userData,
+    required this.alarmId,
+  });
 
   @override
   State<ChallengesPage> createState() => _ChallengesPageState();
@@ -14,7 +20,6 @@ class _ChallengesPageState extends State<ChallengesPage> {
   final List<_MathQuestion> questions = [];
   final Map<int, TextEditingController> controllers = {};
   int correctAnswers = 0;
-  bool submitted = false;
 
   @override
   void initState() {
@@ -22,6 +27,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
     _generateQuestions();
   }
 
+  // تولید سوالات ریاضی تصادفی
   void _generateQuestions() {
     final rand = Random();
     for (int i = 0; i < 5; i++) {
@@ -32,6 +38,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
     }
   }
 
+  // بررسی جواب‌ها و محاسبه تعداد درست‌ها
   void _submit() {
     correctAnswers = 0;
 
@@ -41,8 +48,6 @@ class _ChallengesPageState extends State<ChallengesPage> {
         correctAnswers++;
       }
     }
-
-    setState(() => submitted = true);
 
     if (correctAnswers >= 3) {
       _showResult(
@@ -57,6 +62,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
     }
   }
 
+  // نمایش نتیجه چالش
   void _showResult({required bool success, required String message}) {
     showDialog(
       context: context,
@@ -75,9 +81,13 @@ class _ChallengesPageState extends State<ChallengesPage> {
             ),
           if (success)
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // اینجا بعداً آلارم رو خاموش می‌کنیم
+              onPressed: () async {
+                // 🔹 خاموش کردن آلارم فقط در صورت موفقیت
+                await AlarmNotificationService.stopAlarm(widget.alarmId);
+
+                if (!mounted) return;
+                Navigator.pop(context); // بستن دیالوگ
+                Navigator.pop(context); // بستن صفحه چالش
               },
               child: const Text('OK'),
             ),
@@ -86,12 +96,23 @@ class _ChallengesPageState extends State<ChallengesPage> {
     );
   }
 
+  // ریست کردن سوالات و کنترلرها
   void _reset() {
+    for (final c in controllers.values) {
+      c.clear();
+    }
     questions.clear();
     controllers.clear();
-    submitted = false;
     _generateQuestions();
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    for (final c in controllers.values) {
+      c.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -110,7 +131,6 @@ class _ChallengesPageState extends State<ChallengesPage> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 20),
-
             Expanded(
               child: ListView.builder(
                 itemCount: questions.length,
@@ -127,9 +147,8 @@ class _ChallengesPageState extends State<ChallengesPage> {
                         child: TextField(
                           controller: controllers[index],
                           keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            hintText: '?',
-                          ),
+                          decoration:
+                              const InputDecoration(hintText: '?'),
                         ),
                       ),
                     ),
@@ -137,9 +156,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
                 },
               ),
             ),
-
             const SizedBox(height: 10),
-
             SizedBox(
               width: double.infinity,
               height: 48,
@@ -164,6 +181,7 @@ class _ChallengesPageState extends State<ChallengesPage> {
   }
 }
 
+// مدل سوال ریاضی
 class _MathQuestion {
   final int a;
   final int b;

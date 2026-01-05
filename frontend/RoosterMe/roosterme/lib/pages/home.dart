@@ -23,10 +23,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     pages = [
       ActiveAlarmPage(widget.userData),
-      ChallengesPage(widget.userData),
       ProfilePage(widget.userData),
     ];
-  }
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +38,10 @@ class _HomePageState extends State<HomePage> {
         onTap: (index) => setState(() => currentIndex = index),
         items:  [
           BottomNavigationBarItem(icon: Icon(Icons.alarm), label: 'Alarms'),
-          BottomNavigationBarItem(icon: Icon(Icons.flag), label: 'Challenges'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
   }
 }
-
 
