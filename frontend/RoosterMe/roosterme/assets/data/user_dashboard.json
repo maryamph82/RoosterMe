@@ -1,0 +1,21 @@
+{
+  "user": {
+    "user_id": 1,
+    "username": "novin",
+    "password": "1234"
+  },
+  "alarms": [
+    {
+      "alarm_id": 1,
+      "alarm_time": "06:30"
+    }
+  ],
+  "challenges": [
+    {
+      "challenge_id": 1,
+      "title": "Solve Math Puzzle",
+      "is_completed": false,
+      "alarm_id": 1
+    }
+  ]
+}
