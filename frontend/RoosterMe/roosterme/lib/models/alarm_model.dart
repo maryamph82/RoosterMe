@@ -1,19 +1,26 @@
+import 'package:flutter/material.dart';
+
 class Alarm {
-  final int alarmId;
-  final String alarmTime;
-  final bool isActive;
+  final TimeOfDay time;
+  final String label;
+  bool isActive;
 
   Alarm({
-    required this.alarmId,
-    required this.alarmTime,
-    required this.isActive,
+    required this.time,
+    required this.label,
+    this.isActive = true,
   });
 
   factory Alarm.fromJson(Map<String, dynamic> json) {
+    final parts = json['alarm_time'].split(':');
+
     return Alarm(
-      alarmId: json['alarm_id'],
-      alarmTime: json['alarm_time'],
-      isActive: json['is_active'],
+      time: TimeOfDay(
+        hour: int.parse(parts[0]),
+        minute: int.parse(parts[1]),
+      ),
+      label: json['label'] ?? 'Alarm',
+      isActive: json['is_active'] ?? true,
     );
   }
 }

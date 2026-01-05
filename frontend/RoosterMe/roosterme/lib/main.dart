@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'pages/home.dart';
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
+import 'services/alarm_notification_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AlarmNotificationService.init();
   runApp(const MyApp());
 }
 
